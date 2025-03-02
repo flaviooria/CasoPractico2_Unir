@@ -3,6 +3,7 @@
 
 ### Ansible ###
 *.retry
+.vault-pass
 
 ### SSH ###
 **/.ssh/id_*
