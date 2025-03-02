@@ -1,0 +1,11 @@
+---
+- name: Install podman
+  hosts: az_vm
+  become: true
+
+  tasks:
+    - name: Install
+      ansible.builtin.apt:
+        name: podman
+        state: present
+        update_cache: true
