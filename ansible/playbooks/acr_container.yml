@@ -1,0 +1,40 @@
+---
+- name: Build and push httpd image to ACR
+  hosts: az_vm
+  vars_files:
+    - ../vars/acr_vars.yml
+  tasks:
+    - name: Login to ACR
+      containers.podman.podman_login:
+        username: "{{ acr_username }}"
+        password: "{{ acr_password }}"
+        registry: "{{ acr_login_server }}"
+
+    - name: Pull httpd image
+      containers.podman.podman_image:
+        name: docker.io/httpd
+        tag: alpine
+
+    - name: Tag httpd image for local use
+      containers.podman.podman_tag:
+        image: httpd:alpine
+        target_names:
+          - httpd:casopractico2
+          - "{{ acr_login_server }}/httpd:casopractico2"
+
+    - name: Push the new tagged image to ACR
+      containers.podman.podman_image:
+        name: "{{ acr_login_server }}/httpd:casopractico2"
+        push: true
+
+    - name: Remove local images to save space
+      containers.podman.podman_image:
+        name: httpd:alpine
+        state: absent
+      tags: cleanup
+
+    - name: Remove tagged image
+      containers.podman.podman_image:
+        name: httpd:cp2
+        state: absent
+      tags: cleanup

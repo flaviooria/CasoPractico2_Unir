@@ -5,6 +5,8 @@ resource "azurerm_container_registry" "acr" {
   sku                 = "Standard"
   admin_enabled       = true
 
+  public_network_access_enabled = true
+
   tags = {
     environment = "cp2"
   }
