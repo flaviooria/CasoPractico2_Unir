@@ -4,7 +4,7 @@
 ### Ansible ###
 *.retry
 .vault-pass
-vars/acr_vars.yml
+**/vars/acr_vars.yml
 
 ### SSH ###
 **/.ssh/id_*
