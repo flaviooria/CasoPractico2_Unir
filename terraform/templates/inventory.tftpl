@@ -1,5 +1,5 @@
 [${vm_name}]
-az_vm ansible_host=${vm_ip} ansible_user=${admin_user} ansible_ssh_private_key_file=../.ssh/id_rsa_az_vm ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+${vm_name} ansible_host=${vm_ip} ansible_user=${admin_user} ansible_ssh_private_key_file=../.ssh/id_rsa_az_vm ansible_ssh_common_args='-o StrictHostKeyChecking=no'
 
-[servers]
-az_vm
+[local]
+localhost ansible_connection=local

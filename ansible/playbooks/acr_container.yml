@@ -1,6 +1,6 @@
 ---
-- name: Build and push httpd image to ACR
-  hosts: az_vm
+- name: Pull and push httpd image to ACR
+  hosts: vm-cp2
   vars_files:
     - ../vars/acr_vars.yml
   tasks:
@@ -8,33 +8,41 @@
       containers.podman.podman_login:
         username: "{{ acr_username }}"
         password: "{{ acr_password }}"
-        registry: "{{ acr_login_server }}"
+        registry: "{{ acr_registry }}"
 
-    - name: Pull httpd image
+    - name: Pull images from Docker Hub
       containers.podman.podman_image:
-        name: docker.io/httpd
-        tag: alpine
+        name: "{{ item.name }}"
+        tag: "{{ item.tag }}"
+      loop:
+        - { name: "docker.io/flaviodev99/httpd_server", tag: "casopractico2" }
+        - { name: "docker.io/flaviodev99/ecommerce_api", tag: "cp2" }
 
-    - name: Tag httpd image for local use
+    - name: Tag httpd_server image for ACR
       containers.podman.podman_tag:
-        image: httpd:alpine
+        image: flaviodev99/httpd_server:casopractico2
         target_names:
-          - httpd:casopractico2
-          - "{{ acr_login_server }}/httpd:casopractico2"
+          - "{{ acr_registry }}/httpd_server:casopractico2"
 
-    - name: Push the new tagged image to ACR
+    - name: Tag ecommerce_api image for ACR
+      containers.podman.podman_tag:
+        image: flaviodev99/ecommerce_api:cp2
+        target_names:
+          - "{{ acr_registry }}/ecommerce_api:casopractico2"
+
+    - name: Push the tagged images to ACR
       containers.podman.podman_image:
-        name: "{{ acr_login_server }}/httpd:casopractico2"
+        name: "{{ item.name }}"
         push: true
+      loop:
+        - { name: "{{ acr_registry }}/httpd_server:casopractico2" }
+        - { name: "{{ acr_registry }}/ecommerce_api:casopractico2" }
 
-    - name: Remove local images to save space
+    - name: Remove local image to save space
       containers.podman.podman_image:
-        name: httpd:alpine
+        name: "{{ item.name }}"
         state: absent
-      tags: cleanup
-
-    - name: Remove tagged image
-      containers.podman.podman_image:
-        name: httpd:cp2
-        state: absent
+      loop:
+        - { name: "docker.io/httpd_server:casopractico2" }
+        - { name: "docker.io/ecommerce_api:cp2" }
       tags: cleanup
