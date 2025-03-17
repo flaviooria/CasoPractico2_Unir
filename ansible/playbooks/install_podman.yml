@@ -1,6 +1,6 @@
 ---
 - name: Install podman
-  hosts: az_vm
+  hosts: vm-cp2
   become: true
 
   tasks:
