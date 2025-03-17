@@ -1,0 +1,4 @@
+kubeconfig_path: "../kubeconfig" # Ruta al archivo kubeconfig generado por az aks get-credentials
+manifests_dir: "./k8s"
+namespace_aks: "casopractico2" # Directorio donde están tus archivos YAML
+templates_path: "../templates"

@@ -22,3 +22,15 @@ output "acr_admin_password" {
   value       = azurerm_container_registry.acr.admin_password
   sensitive   = true # Oculta la salida en la terminal
 }
+
+output "client_certificate" {
+  description = "Certificado de cliente"
+  value       = azurerm_kubernetes_cluster.aks_cp2.kube_config[0].client_certificate
+  sensitive   = true
+}
+
+output "kube_config" {
+  description = "Configuración de Kubernetes para conectarse a la cluster"
+  value       = azurerm_kubernetes_cluster.aks_cp2.kube_config_raw
+  sensitive   = true
+}
