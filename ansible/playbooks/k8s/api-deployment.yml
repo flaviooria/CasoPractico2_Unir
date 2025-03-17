@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+spec:
+  replicas: 2 # Número de pods a crear
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      containers:
+      - name: api
+        image: acrcp2.azurecr.io/ecommerce_api:casopractico2
+        imagePullPolicy: Always
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "200m"
+        readinessProbe: # Sirve para saber si el pod está listo, es decir si se puede acceder a ella
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 5 # Espera 5 segundos antes de comprobar
+          periodSeconds: 10 # Comprueba cada 10 segundos
+        livenessProbe: # Sirve para saber si el pod está vivo, es decir si está respondiendo
+          tcpSocket:
+            port: 8080
+          initialDelaySeconds: 10 # Espera 10 segundos antes de comprobar
+          periodSeconds: 20 # Comprueba cada 20 segundos
+        ports:
+        - containerPort: 8080
+        env:
+          - name: JWT_SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: db-api-secrets
+                key: jwt_secret_key
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: db-api-secrets
+                key: db_password
+        envFrom:
+          - configMapRef:
+              name: env-local

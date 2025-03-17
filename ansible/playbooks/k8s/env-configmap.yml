@@ -1,0 +1,13 @@
+apiVersion: v1
+data:
+  ENVIRONMENT: "local"
+  POSTGRES_DB: "ecommerce"
+  POSTGRES_HOST: "db-service"
+  POSTGRES_PORT: "5432"
+  POSTGRES_USER: "flavio_cp2"
+  PYTHONPATH: "."
+kind: ConfigMap
+metadata:
+  labels:
+    io.kompose.service: ecommerce-api-env-local
+  name: env-local

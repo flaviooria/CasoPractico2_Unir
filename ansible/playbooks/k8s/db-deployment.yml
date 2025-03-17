@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-db
+spec:
+  selector:
+    matchLabels:
+      app: postgres-db
+  template:
+    metadata:
+      labels:
+        app: postgres-db
+    spec:
+      containers:
+      - name: postgres-db
+        image: postgres:14-alpine
+        imagePullPolicy: Always
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 5432
+        env:
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: db-api-secrets
+                key: db_password
+          - name: PGDATA
+            value: "/var/lib/postgresql/data/pgdata"
+        envFrom:
+          - configMapRef:
+              name: env-local
+        volumeMounts:
+          - mountPath: "/var/lib/postgresql/data"
+            name: db-storage
+      volumes:
+        - name: db-storage
+          persistentVolumeClaim:
+            claimName: backend-pvc
