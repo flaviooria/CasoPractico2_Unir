@@ -5,7 +5,7 @@
     - ../vars/acr_vars.yml
 
   tasks:
-    - name: Crea y arranca el contenedor httpd_server
+    - name: Create and run httpd_server container
       containers.podman.podman_container:
         name: httpd_server
         image: "{{ acr_registry }}/httpd_server:casopractico2"
@@ -16,19 +16,19 @@
         recreate: true
         restart_policy: always # Mantiene el contenedor activo mientras Podman está corriendo
 
-    - name: Crontab para arrancar el contenedor cuando reinicie la VM
+    - name: Crontab to start httpd_server on reboot
       ansible.builtin.cron:
         name: "Start httpd_server on reboot"
         special_time: reboot
         job: "podman start httpd_server"
         state: present
 
-    - name: Verificar el estado del contenedor
+    - name: Verify httpd_server container status
       containers.podman.podman_container_info:
         name: httpd_server
       register: container_info
 
-    - name: Mostrar información del contenedor
+    - name: Show httpd_server container status information
       ansible.builtin.debug:
         msg:
           - "El contenedor httpd_server está {{ container_info.containers[0].State.Status }} con ID {{ container_info.containers[0].Id }}"

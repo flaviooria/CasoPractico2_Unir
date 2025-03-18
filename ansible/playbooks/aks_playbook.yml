@@ -8,7 +8,7 @@
 
   tasks:
     # 1. Crear el namespace (dependencia inicial)
-    - name: Crear el namespace casopractico2
+    - name: Create namespace casopractico2
       kubernetes.core.k8s:
         kubeconfig: "{{ kubeconfig_path }}"
         state: present
@@ -23,7 +23,7 @@
       until: namespace_result is success
 
     # 2. Aplicar Secretos (necesario antes de los despliegues que lo referencian)
-    - name: Aplicar Secretos (db-api-secrets)
+    - name: Apply secrets (db-api-secrets)
       kubernetes.core.k8s:
         kubeconfig: "{{ kubeconfig_path }}"
         state: present
@@ -35,7 +35,7 @@
       until: secrets_result is success
 
     # 3. Aplicar ConfigMap (necesario antes de los despliegues que lo referencian)
-    - name: Aplicar ConfigMap de entorno (env-local)
+    - name: Apply ConfigMap environment variables (env-local)
       kubernetes.core.k8s:
         kubeconfig: "{{ kubeconfig_path }}"
         state: present
@@ -47,7 +47,7 @@
       until: configmap_result is success
 
     # 4. Aplicar PersistentVolumeClaim (necesario antes del despliegue de la base de datos)
-    - name: Aplicar PersistentVolumeClaim (backend-pvc)
+    - name: Apply PersistentVolumeClaim (backend-pvc)
       kubernetes.core.k8s:
         kubeconfig: "{{ kubeconfig_path }}"
         state: present
@@ -59,7 +59,7 @@
       until: pvc_result is success
 
     # 5. Aplicar Despliegue de la Base de Datos (depende de Secret, ConfigMap y PVC)
-    - name: Aplicar Despliegue de la Base de Datos (postgres-db)
+    - name: Apply deploy of the Database (postgres-db)
       kubernetes.core.k8s:
         kubeconfig: "{{ kubeconfig_path }}"
         state: present
@@ -71,7 +71,7 @@
       until: db_deployment_result is success
 
     # 6. Aplicar Servicio de la Base de Datos (depende del despliegue de la DB)
-    - name: Aplicar Servicio de la Base de Datos (db-service)
+    - name: Apply service of the Database (db-service)
       kubernetes.core.k8s:
         kubeconfig: "{{ kubeconfig_path }}"
         state: present
@@ -83,7 +83,7 @@
       until: db_service_result is success
 
     # 7. Renderizar template de la API Deployment
-    - name: Renderizar template de la API Deployment
+    - name: Render template of the API Deployment
       ansible.builtin.template:
         src: "{{ templates_path }}/api_deployment.j2"
         dest: "{{ manifests_dir }}/api-deployment.yml"
@@ -92,7 +92,7 @@
         image: "{{ acr_registry }}/ecommerce_api:casopractico2"
 
     # 8. Aplicar Despliegue de la API (depende de Secret, ConfigMap y db-service)
-    - name: Aplicar Despliegue de la API
+    - name: Apply deploy of the API
       kubernetes.core.k8s:
         kubeconfig: "{{ kubeconfig_path }}"
         state: present
@@ -104,7 +104,7 @@
       until: api_deployment_result is success
 
     # 9. Aplicar Servicio de la API (depende del despliegue de la API)
-    - name: Aplicar Servicio de la API
+    - name: Apply service of the API
       kubernetes.core.k8s:
         kubeconfig: "{{ kubeconfig_path }}"
         state: present
@@ -116,7 +116,7 @@
       until: api_service_result is success
 
     # 10. Verificar estado de los pods (opcional, para depuración)
-    - name: Verificar que los pods estén corriendo
+    - name: Verify pods status
       kubernetes.core.k8s_info:
         kubeconfig: "{{ kubeconfig_path }}"
         kind: Pod
