@@ -5,13 +5,7 @@
     - ../vars/acr_vars.yml
 
   tasks:
-    - name: Ensure systemd user directory exists
-      ansible.builtin.file:
-        path: ~/.config/systemd/user
-        state: directory
-        mode: "0700"
-
-    - name: Create container to run httpd server
+    - name: Crea y arranca el contenedor httpd_server
       containers.podman.podman_container:
         name: httpd_server
         image: "{{ acr_registry }}/httpd_server:casopractico2"
@@ -20,12 +14,21 @@
         state: started
         detach: true
         recreate: true
-        generate_systemd:
-          path: ~/.config/systemd/user/
-          restart_policy: always
-          names: true
+        restart_policy: always # Mantiene el contenedor activo mientras Podman está corriendo
 
-    - name: Reload systemd user daemon
-      ansible.builtin.systemd:
-        daemon_reload: true
-        scope: user
+    - name: Crontab para arrancar el contenedor cuando reinicie la VM
+      ansible.builtin.cron:
+        name: "Start httpd_server on reboot"
+        special_time: reboot
+        job: "podman start httpd_server"
+        state: present
+
+    - name: Verificar el estado del contenedor
+      containers.podman.podman_container_info:
+        name: httpd_server
+      register: container_info
+
+    - name: Mostrar información del contenedor
+      ansible.builtin.debug:
+        msg:
+          - "El contenedor httpd_server está {{ container_info.containers[0].State.Status }} con ID {{ container_info.containers[0].Id }}"
