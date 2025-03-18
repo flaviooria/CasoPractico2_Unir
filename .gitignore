@@ -4,7 +4,8 @@
 ### Ansible ###
 *.retry
 .vault-pass
-**/vars/acr_vars.yml
+**/vars/secrets.enc
+kubeconfig
 
 ### SSH ###
 **/.ssh/id_*
