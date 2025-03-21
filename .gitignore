@@ -6,6 +6,8 @@
 .vault-pass
 kubeconfig
 secrets.enc
+inventory.ini
+acr_vars.yml
 
 ### SSH ###
 **/.ssh/id_*
