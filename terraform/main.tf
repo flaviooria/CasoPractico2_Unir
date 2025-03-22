@@ -15,11 +15,11 @@ provider "azurerm" {
 }
 
 resource "azurerm_resource_group" "rg" {
-  name     = "rg-terraform_cp2"
-  location = "West Europe"
+  name     = var.rg_cp2_name
+  location = var.location
 
   tags = {
-    environment = "cp2"
+    environment = var.tag_environment
   }
 }
 

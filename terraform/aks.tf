@@ -1,8 +1,8 @@
 resource "azurerm_kubernetes_cluster" "aks_cp2" {
-  name                = "fop-aks-cp2"
+  name                = "fop-aks-${var.tag_environment}"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
-  dns_prefix          = "fop-aks-cp2"
+  dns_prefix          = "fop-aks-${var.tag_environment}"
 
   default_node_pool {
     name       = "default"
@@ -15,7 +15,7 @@ resource "azurerm_kubernetes_cluster" "aks_cp2" {
   }
 
   tags = {
-    environment = "cp2"
+    environment = var.tag_environment
   }
 }
 

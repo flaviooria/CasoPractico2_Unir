@@ -1,7 +1,7 @@
 resource "azurerm_linux_virtual_machine" "vm_cp2" {
   depends_on = [tls_private_key.ssh_key]
 
-  name                = "vm-cp2"
+  name                = "vm-${var.tag_environment}"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   size                = "Standard_B1s"
@@ -25,5 +25,9 @@ resource "azurerm_linux_virtual_machine" "vm_cp2" {
     offer     = "ubuntu-24_04-lts"
     sku       = "server"
     version   = "latest"
+  }
+
+  tags = {
+    environment = var.tag_environment
   }
 }

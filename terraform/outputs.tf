@@ -23,6 +23,11 @@ output "acr_admin_password" {
   sensitive   = true # Oculta la salida en la terminal
 }
 
+# Output the public key
+output "public_key" {
+  value = tls_private_key.ssh_key.public_key_openssh
+}
+
 output "client_certificate" {
   description = "Certificado de cliente"
   value       = azurerm_kubernetes_cluster.aks_cp2.kube_config[0].client_certificate
